@@ -5,6 +5,7 @@ import serial
 from serial.tools import list_ports
 import Tkinter
 from PIL import Image, ImageTk
+#from PIL import Image
 import threading
 from io import BytesIO
 
@@ -101,7 +102,7 @@ def key(event):
         th.start()
 
 # ポート番号を取得する##################################
-matched_ports = list_ports.grep("cu.usbserial-")
+matched_ports = list_ports.grep("ttyUSB")
 for match_tuple in matched_ports:
     SERIAL_PORT = match_tuple[0]
     break
