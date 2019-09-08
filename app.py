@@ -56,28 +56,36 @@ def capture():
     if strRet == "NG":
         return False
 
-    # 撮像
-    device.write("C01\n")
-    strRet = get_command(device)
-    if strRet == "NG":
-        return False
+    num = 0
+    while num <= 3:
+        # 撮像
+        device.write("C01\n")
+        strRet = get_command(device)
+        if strRet == "NG":
+            return False
 
-    iSize = int(strRet)
-    iCnt = 0
-    datas = ""
-    while True:
-        chars = device.read(30000)
-        if len(chars) > 0:
-            datas = datas + chars
-            iCnt = iCnt + len(chars)
-        if iSize <= iCnt:
-            break
+        iSize = int(strRet)
+        iCnt = 0
+        datas = ""
+        while True:
+            chars = device.read(30000)
+            if len(chars) > 0:
+                datas = datas + chars
+                iCnt = iCnt + len(chars)
+            if iSize <= iCnt:
+                break
+
+        try:
+            img = Image.open(BytesIO(datas))
+        except:
+            return False
+
+        num = num + 1
 
     # Gコードモードに変更
     device.write(chr(0x11))
     device.close()
 
-    img = Image.open(BytesIO(datas))
     img = img.resize((IMG_W, IMG_H))
     canvas.photo = ImageTk.PhotoImage(img)
     canvas.create_image(0, 0, image=canvas.photo, anchor=Tkinter.NW)
@@ -97,6 +105,8 @@ def f(event):
 
 
 def key(event):
+    if event.char != ' ':
+        return
     if lock.acquire(False):
         th = threading.Thread(target=f, args=(event,))
         th.start()
