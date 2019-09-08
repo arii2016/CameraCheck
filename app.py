@@ -57,7 +57,7 @@ def capture():
         return False
 
     num = 0
-    while num <= 3:
+    while num < 3:
         # 撮像
         device.write("C01\n")
         strRet = get_command(device)
