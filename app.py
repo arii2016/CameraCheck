@@ -54,6 +54,7 @@ def capture():
     device.write("E01\n")
     strRet = get_line(device)
     if strRet == "NG":
+        Lb_Judge.configure(text=u'初期化')
         return False
 
     num = 0
@@ -62,6 +63,7 @@ def capture():
         device.write("C01\n")
         strRet = get_command(device)
         if strRet == "NG":
+            Lb_Judge.configure(text=u'撮影')
             return False
 
         iSize = int(strRet)
@@ -78,6 +80,7 @@ def capture():
         try:
             img = Image.open(BytesIO(datas))
         except:
+            Lb_Judge.configure(text=u'転送')
             return False
 
         num = num + 1
@@ -99,7 +102,7 @@ def f(event):
     if capture() == True:
         Lb_Judge.configure(text='OK', foreground='#00ff00', background='#aaffcc')
     else:
-        Lb_Judge.configure(text='NG', foreground='#ff0000', background='#ffaacc')
+        Lb_Judge.configure(foreground='#ff0000', background='#ffaacc')
 
     lock.release()
 
