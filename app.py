@@ -44,8 +44,12 @@ def capture():
     if strRet != "OK":
         return False
 
-    # 起動文字列を取得
-    strRet = get_line(device)
+    while True:
+        device.write(chr(0x16))
+        chars = device.read()
+        if chars == chr(0x06):
+            device.flushInput()
+            break
 
     # コマンドモードに変更
     device.write(chr(0x13))
