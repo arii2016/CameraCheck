@@ -41,8 +41,6 @@ def capture():
     # 再起動
     device.write("S01\n")
     strRet = get_line(device)
-    if strRet != "OK":
-        return False
 
     while True:
         device.write(chr(0x16))
@@ -62,7 +60,7 @@ def capture():
         return False
 
     num = 0
-    while num < 3:
+    while num < 1:
         # 撮像
         device.write("C01\n")
         strRet = get_command(device)
