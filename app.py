@@ -44,7 +44,7 @@ def capture():
     # コマンドモードに変更
     device.write(chr(0x13))
 
-    # カメラ初期化
+    # カメラ再起動
     device.write("C02\n")
     strRet = get_command(device)
     if strRet == "NG":
