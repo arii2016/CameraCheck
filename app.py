@@ -44,9 +44,30 @@ def capture():
     # コマンドモードに変更
     device.write(chr(0x13))
 
-    # カメラ再起動
-    device.write("C02\n")
-    strRet = get_command(device)
+    # 再起動
+    device.write("S01\n")
+    strRet = get_line(device)
+    if strRet != "OK":
+        Lb_Judge.configure(text='reboot1失敗')
+        return False
+
+    timeout = time.time()
+    while True:
+        if (time.time() - timeout) > 5.0:
+            Lb_Judge.configure(text='reboot2失敗')
+            return False
+        device.write(chr(0x16))
+        chars = device.read()
+        if chars == chr(0x06):
+            device.flushInput()
+            break
+
+    # コマンドモードに変更
+    device.write(chr(0x13))
+
+    # カメラエラーチェック
+    device.write("E01\n")
+    strRet = get_line(device)
     if strRet == "NG":
         Lb_Judge.configure(text=u'初期化')
         return False
@@ -78,6 +99,8 @@ def capture():
             return False
 
         num = num + 1
+
+    device.close()
 
     img = img.resize((IMG_W, IMG_H))
     canvas.photo = ImageTk.PhotoImage(img)
