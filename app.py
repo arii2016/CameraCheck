@@ -51,7 +51,11 @@ def get_esp_start(device, time_out=10.0):
 
 # 撮像
 def capture():
-    device = serial.Serial(SERIAL_PORT, 921600, timeout=1, writeTimeout=0.1)
+    try:
+        device = serial.Serial(SERIAL_PORT, 921600, timeout=1, writeTimeout=0.1)
+    except:
+        Lb_Judge.configure(text='未接続')
+        return
 
     # コマンドモードに変更
     device.write(chr(0x13))
