@@ -37,18 +37,6 @@ def get_line(device):
         rx_buffer += chars
     return rx_buffer
 
-def get_esp_start(device, time_out=10.0):
-    start_time = time.time()
-    while True:
-        if (time.time() - start_time) > time_out:
-            return False
-        device.write(chr(0x16))
-        chars = device.read()
-        if chars == chr(0x06):
-            device.flushInput()
-            break
-    return True
-
 # 撮像
 def capture():
     try:
@@ -71,7 +59,7 @@ def capture():
     device.flushInput()
     timeout = time.time()
     while True:
-        if (time.time() - timeout) > 5.0:
+        if (time.time() - timeout) > 8.0:
             Lb_Judge.configure(text='reboot2失敗')
             return False
         device.write(chr(0x16))
