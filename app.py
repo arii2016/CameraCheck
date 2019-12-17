@@ -150,7 +150,7 @@ IMG_W = root.winfo_screenwidth() / 4 * 3
 IMG_H = int(round(DEF_IMG_H * IMG_W / DEF_IMG_W))
 
 canvas = Tkinter.Canvas(bg = "black", width=IMG_W, height=IMG_H)
-canvas.pack(side='right', pady=0, ipady=0)
+canvas.pack(side='right', anchor='n', pady=0, ipady=0)
 
 root.mainloop()
 
