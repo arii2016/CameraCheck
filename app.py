@@ -68,6 +68,9 @@ def capture():
     # コマンドモードに変更
     device.write(chr(0x13))
 
+    time.sleep(0.5)
+    # 入力をクリア
+    device.flushInput()
     # カメラエラーチェック
     device.write("E01\n")
     strRet = get_line(device)
