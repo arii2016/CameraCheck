@@ -91,7 +91,11 @@ def capture():
     iSize = int(strRet)
     iCnt = 0
     datas = ""
+    timeout = time.time()
     while True:
+        if (time.time() - timeout) > 15.0:
+            Lb_Judge.configure(text='取得失敗')
+            return False
         chars = device.read(30000)
         if len(chars) > 0:
             datas = datas + chars
