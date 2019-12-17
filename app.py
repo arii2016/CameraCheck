@@ -72,33 +72,29 @@ def capture():
         Lb_Judge.configure(text=u'初期化')
         return False
 
-    num = 0
-    while num < 1:
-        # 撮像
-        device.write("C01\n")
-        strRet = get_command(device)
-        if strRet == "NG":
-            Lb_Judge.configure(text=u'撮影')
-            return False
+    # 撮像
+    device.write("C01\n")
+    strRet = get_command(device)
+    if strRet == "NG":
+        Lb_Judge.configure(text=u'撮影')
+        return False
 
-        iSize = int(strRet)
-        iCnt = 0
-        datas = ""
-        while True:
-            chars = device.read(30000)
-            if len(chars) > 0:
-                datas = datas + chars
-                iCnt = iCnt + len(chars)
-            if iSize <= iCnt:
-                break
+    iSize = int(strRet)
+    iCnt = 0
+    datas = ""
+    while True:
+        chars = device.read(30000)
+        if len(chars) > 0:
+            datas = datas + chars
+            iCnt = iCnt + len(chars)
+        if iSize <= iCnt:
+            break
 
-        try:
-            img = Image.open(BytesIO(datas))
-        except:
-            Lb_Judge.configure(text=u'転送')
-            return False
-
-        num = num + 1
+    try:
+        img = Image.open(BytesIO(datas))
+    except:
+        Lb_Judge.configure(text=u'転送')
+        return False
 
     device.close()
 
@@ -108,7 +104,8 @@ def capture():
 
     return True
 
-def f(event):
+def f():
+    Bt_Exec.config(state="disable")
     Lb_Judge.configure(text='--', foreground='#000000', background='#eeeeee')
     canvas.delete("all")
 
@@ -117,14 +114,12 @@ def f(event):
     else:
         Lb_Judge.configure(foreground='#ff0000', background='#ffaacc')
 
+    Bt_Exec.config(state="normal")
     lock.release()
 
-
-def key(event):
-    if event.char != ' ':
-        return
+def capture_click():
     if lock.acquire(False):
-        th = threading.Thread(target=f, args=(event,))
+        th = threading.Thread(target=f)
         th.start()
 
 # ポート番号を取得する##################################
@@ -141,10 +136,15 @@ lock = threading.Lock()
 
 root = Tkinter.Tk()
 root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
-root.bind("<Key>", key)
 
-Lb_Judge = Tkinter.Label(root, text='--', foreground='#000000', background='#eeeeee', height=5, font=("", 50))
-Lb_Judge.pack(side='left', expand=True, fill="x")
+frame = Tkinter.Frame(root)
+frame.pack(side='left', expand=True, fill="both")
+
+Lb_Judge = Tkinter.Label(frame, text='--', foreground='#000000', background='#eeeeee', height=3, font=("", 16))
+Lb_Judge.pack(side='top', expand=True, fill="x")
+
+Bt_Exec = Tkinter.Button(frame, text='実行', width=8, height=2, font=("", 20), command=capture_click, state="normal")
+Bt_Exec.pack(side='left', expand=True)
 
 IMG_W = root.winfo_screenwidth() / 4 * 3
 IMG_H = int(round(DEF_IMG_H * IMG_W / DEF_IMG_W))
