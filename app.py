@@ -58,12 +58,23 @@ def capture():
 
     # 再起動
     device.write("S01\n")
-
-    # 入力をクリア    
-    device.flushInput()
-    # ESP起動確認
-    if get_esp_start(device) == False:
+    strRet = get_line(device)
+    if strRet == "NG":
+        Lb_Judge.configure(text='reboot1失敗')
         return False
+
+    # 入力をクリア
+    device.flushInput()
+    timeout = time.time()
+    while True:
+        if (time.time() - timeout) > 5.0:
+            Lb_Judge.configure(text='reboot2失敗')
+            return False
+        device.write(chr(0x16))
+        chars = device.read()
+        if chars == chr(0x06):
+            device.flushInput()
+            break
 
     # コマンドモードに変更
     device.write(chr(0x13))
