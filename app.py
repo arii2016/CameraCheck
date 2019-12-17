@@ -37,6 +37,18 @@ def get_line(device):
         rx_buffer += chars
     return rx_buffer
 
+def get_esp_start(device, time_out=10.0):
+    start_time = time.time()
+    while True:
+        if (time.time() - start_time) > time_out:
+            return False
+        device.write(chr(0x16))
+        chars = device.read()
+        if chars == chr(0x06):
+            device.flushInput()
+            break
+    return True
+
 # 撮像
 def capture():
     device = serial.Serial(SERIAL_PORT, 921600, timeout=1, writeTimeout=0.1)
@@ -46,21 +58,12 @@ def capture():
 
     # 再起動
     device.write("S01\n")
-    strRet = get_line(device)
-    if strRet != "OK":
-        Lb_Judge.configure(text='reboot1失敗')
-        return False
 
-    timeout = time.time()
-    while True:
-        if (time.time() - timeout) > 5.0:
-            Lb_Judge.configure(text='reboot2失敗')
-            return False
-        device.write(chr(0x16))
-        chars = device.read()
-        if chars == chr(0x06):
-            device.flushInput()
-            break
+    # 入力をクリア    
+    device.flushInput()
+    # ESP起動確認
+    if get_esp_start(device) == False:
+        return False
 
     # コマンドモードに変更
     device.write(chr(0x13))
