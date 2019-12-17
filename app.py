@@ -144,7 +144,7 @@ Lb_Judge = Tkinter.Label(frame, text='--', foreground='#000000', background='#ee
 Lb_Judge.pack(side='top', expand=True, fill="x", anchor='n', pady=0, ipady=0)
 
 Bt_Exec = Tkinter.Button(frame, text='実行', width=8, height=2, font=("", 20), command=capture_click, state="normal")
-Bt_Exec.pack(side='left', expand=True, anchor='n', pady=0, ipady=0)
+Bt_Exec.pack(side='top', expand=True, fill="x", anchor='n', pady=0, ipady=0)
 
 IMG_W = root.winfo_screenwidth() / 4 * 3
 IMG_H = int(round(DEF_IMG_H * IMG_W / DEF_IMG_W))
